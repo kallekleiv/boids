@@ -2,16 +2,17 @@ mod boid;
 mod constants;
 
 use boid::Boid;
-use constants::{NUM_BOIDS, VIEW_RADIUS};
+use constants::NUM_BOIDS;
 
 fn main() {
     let boids = vec![Boid::new(); NUM_BOIDS];
-    for boid in boids.iter() {
-        let neighbors = get_neighbors(&boid);
-        boid.separation(neighbors);
-        boid.cohesion(neighbors);
-        boid.alignment(neighbors);
+    for mut boid in boids {
+        let neighbors = boid.get_neighbors(&boids);
+        if !neighbors.is_empty() {
+            boid.separation(&neighbors);
+            boid.cohesion(&neighbors);
+            boid.alignment(&neighbors);
+        }
+        boid.update_position();
     }
 }
-
-fn get_neighbors(boid: &Boid) {}

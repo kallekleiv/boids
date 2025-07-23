@@ -18,9 +18,9 @@ impl Boid {
         }
     }
 
-    pub fn update_position(&mut self, dx: f32, dy: f32) {
-        self.x += dx;
-        self.y += dy;
+    pub fn update_position(&mut self) {
+        self.x += self.vx;
+        self.y += self.vy;
     }
 
     pub fn update_velocity(&mut self, d_vx: f32, d_vy: f32) {
@@ -38,12 +38,22 @@ impl Boid {
         self.distance_to(neighbor) < VIEW_RADIUS
     }
 
+    pub fn get_neighbors(&self, boids: &Vec<Boid>) -> &Vec<Boid> {
+        let mut neighbors = Vec::new();
+        for boid in boids {
+            if self.is_visible(boid) {
+                neighbors.push(boid.clone())
+            }
+        }
+        neighbors
+    }
+
     // Each boid attempts to avoid running into other boids. If two or more boids get too close to one another (i.e. within one another's protected range), they will steer away from one another. They will do so in the following way:
     pub fn separation(&mut self, neighbors: &[Boid]) {
         let mut close_dx: f32 = 0.0;
         let mut close_dy: f32 = 0.0;
 
-        for neighbor in neighbors.iter() {
+        for neighbor in neighbors {
             close_dx += self.x - neighbor.x;
             close_dy += self.y - neighbor.y;
         }
@@ -57,7 +67,7 @@ impl Boid {
         let mut yvel_avg: f32 = 0.0;
         let neighboring_boids: f32 = neighbors.len() as f32;
 
-        for neighbor in neighbors.iter() {
+        for neighbor in neighbors {
             xvel_avg += neighbor.vx;
             yvel_avg += neighbor.vy;
         }
@@ -77,7 +87,7 @@ impl Boid {
         let mut ypos_avg: f32 = 0.0;
         let neighboring_boids: f32 = neighbors.len() as f32;
 
-        for neighbor in neighbors.iter() {
+        for neighbor in neighbors {
             xpos_avg += neighbor.x;
             ypos_avg += neighbor.y;
         }
